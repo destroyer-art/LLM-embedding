@@ -1,5 +1,5 @@
 import { Container } from '@/components/Container'
-export const HeroText = () => {
+export const HeroText = ({ version }) => {
   return (
     <>
       <div className="flex h-1/3 flex-col items-center justify-center py-2">
@@ -7,8 +7,10 @@ export const HeroText = () => {
           <h1 className="mt-2 text-3xl font-medium tracking-tight text-gray-900">
             FOMO
           </h1>
-          <p className="mt-2 text-lg text-gray-600">Never miss a thing</p>
-          <p className="text-sm font-semibold text-gray-900">v0.1</p>
+          <p className="mt-2 text-lg text-gray-600">
+            Higher signal. Lower noise.
+          </p>
+          <p className="text-sm font-semibold text-gray-900">v{version}</p>
         </Container>
       </div>
     </>

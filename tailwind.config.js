@@ -62,6 +62,26 @@ module.exports = {
       maxWidth: {
         '2xl': '40rem',
       },
+      animation: {
+        cursor: 'cursor .6s linear infinite alternate',
+        type: 'type 1.8s ease-out .8s 1 normal both',
+        'type-reverse': 'type 1.8s ease-out 0s infinite alternate-reverse both',
+      },
+      keyframes: {
+        type: {
+          '0%': { width: '00%' },
+          '5%, 10%': { width: '10%' },
+          '15%, 20%': { width: '20%' },
+          '25%, 30%': { width: '30%' },
+          '35%, 40%': { width: '40%' },
+          '45%, 50%': { width: '50%' },
+          '55%, 60%': { width: '60%' },
+          '65%, 70%': { width: '70%' },
+          '75%, 80%': { width: '80%' },
+          '85%, 90%': { width: '90%' },
+          '95%': { width: '100%' },
+        },
+      },
     },
   },
   plugins: [require('@tailwindcss/forms')],
