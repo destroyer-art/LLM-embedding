@@ -29,7 +29,7 @@ export const VibeCombo = ({
         onChange={setSelectedEntity}
         defaultValue={entities[0]}
       >
-        <p className="">{prefixText}</p>
+        <p>{prefixText}</p>
 
         <div className="relative mt-2">
           <Combobox.Input
@@ -55,7 +55,7 @@ export const VibeCombo = ({
                   )
                 }
               >
-                Add "{query}"
+                Add {"'"+query+"'"}
               </Combobox.Option>
             )}
 
