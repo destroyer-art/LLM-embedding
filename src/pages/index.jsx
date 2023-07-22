@@ -67,23 +67,28 @@ export default function Home() {
         setSelectedEntity={setSelectedGoal}
         disabled={canBegin && !beginButtonActive}
       />
-      {canBegin && (
-        <p className="mt-4 text-center text-sm text-gray-500">
+      <div className="mx-auto mt-4 w-1/2 w-3/4 max-w-md justify-center py-4 text-center">
+        <p className="mt-4 text-sm text-gray-500">
           I am{' '}
-          <em className="bg-blue-200 font-bold">{selectedIdentity?.name}</em>{' '}
+          <em className="font-bold">
+            {selectedIdentity ? selectedIdentity.name : '...'}
+          </em>{' '}
           interested in{' '}
-          <em className="bg-yellow-200 font-bold">{selectedInterest?.name}</em>{' '}
+          <em className="font-bold">
+            {selectedInterest ? selectedInterest.name : '...'}
+          </em>{' '}
           so I can{' '}
-          <em className="bg-green-200 font-bold"> {selectedGoal?.name}</em>.
+          <em className="font-bold">
+            {' '}
+            {selectedGoal ? selectedGoal?.name : '... '}
+          </em>
         </p>
-      )}
-      <div className="mt-4 flex justify-center">
         {beginButtonActive && canBegin ? (
-          <Button className="" onClick={begin}>
+          <Button className="mt-4 w-1/2" onClick={begin}>
             Go
           </Button>
         ) : (
-          <Button className="disabled:opacity-50" disabled>
+          <Button className="mt-4 w-1/2 disabled:opacity-50" disabled>
             Go
           </Button>
         )}

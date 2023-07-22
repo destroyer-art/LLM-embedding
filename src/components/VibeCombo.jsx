@@ -28,7 +28,6 @@ export const VibeCombo = ({
         as="div"
         value={selectedEntity}
         onChange={setSelectedEntity}
-        defaultValue={entities[0]}
         disabled={disabled}
       >
         <p>{prefixText}</p>
