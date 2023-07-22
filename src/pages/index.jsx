@@ -41,6 +41,7 @@ export default function Home() {
     <>
       <Head>
         <title>FOMO v{version}</title>
+        <meta name="description" content="Miss out on nothing. Faster." />
       </Head>
       <CirclesBackground className="absolute left-1/2 top-1/2 -z-10 mt-44 w-[68.125rem] -translate-x-1/2 -translate-y-1/2 stroke-gray-300/30 [mask-image:linear-gradient(to_bottom,white_20%,transparent_75%)]" />
       <HeroText version={version} />
