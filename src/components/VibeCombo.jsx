@@ -11,6 +11,7 @@ export const VibeCombo = ({
   entities,
   selectedEntity,
   setSelectedEntity,
+  disabled = false,
 }) => {
   const [query, setQuery] = useState('')
 
@@ -28,6 +29,7 @@ export const VibeCombo = ({
         value={selectedEntity}
         onChange={setSelectedEntity}
         defaultValue={entities[0]}
+        disabled={disabled}
       >
         <p>{prefixText}</p>
 
@@ -55,7 +57,7 @@ export const VibeCombo = ({
                   )
                 }
               >
-                Add {"'"+query+"'"}
+                Add {"'" + query + "'"}
               </Combobox.Option>
             )}
 

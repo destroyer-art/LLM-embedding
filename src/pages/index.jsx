@@ -7,7 +7,7 @@ import { Button } from '@/components/Button'
 import { CirclesBackground } from '@/components/CirclesBackground'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const version = '0.1.2'
+const version = '0.1.3'
 
 const identities = [
   { id: 'identity-' + 1, name: 'an Investor' },
@@ -26,11 +26,12 @@ export default function Home() {
   const [selectedIdentity, setSelectedIdentity] = useState(identities[0])
   const [selectedInterest, setSelectedInterest] = useState('')
   const [selectedGoal, setSelectedGoal] = useState('')
-  const [canBegin, setCanBegin] = useState(false)
+  const [beginButtonActive, setBeginButtonActive] = useState(true)
+  const canBegin = selectedIdentity && selectedInterest && selectedGoal
 
   function begin() {
-    console.log('Vibe:', vibeText, canBegin)
-    setCanBegin(true)
+    console.log('Vibe:', vibeText)
+    setBeginButtonActive(false)
   }
 
   let vibeText = `I am ${selectedIdentity?.name} interested in ${selectedInterest?.name} so I can ${selectedGoal?.name}.`
@@ -49,42 +50,43 @@ export default function Home() {
         entities={identities}
         selectedEntity={selectedIdentity}
         setSelectedEntity={setSelectedIdentity}
+        disabled={canBegin && !beginButtonActive}
       />
       <VibeCombo
         prefixText={'interested in'}
         entities={interests}
         selectedEntity={selectedInterest}
         setSelectedEntity={setSelectedInterest}
+        disabled={canBegin && !beginButtonActive}
       />
       <VibeCombo
         prefixText={'so I can'}
         entities={goals}
         selectedEntity={selectedGoal}
         setSelectedEntity={setSelectedGoal}
+        disabled={canBegin && !beginButtonActive}
       />
-      <div className="mt-4 flex justify-center">
-        <Button className="" onClick={begin}>
-          Go
-        </Button>
-      </div>
       {canBegin && (
         <p className="mt-4 text-center text-sm text-gray-500">
           I am{' '}
-          <span className="text-brand-accent inline-flex h-8 animate-type overflow-x-hidden whitespace-nowrap pt-2 will-change-transform group-hover:animate-type-reverse">
-            <em className="bg-blue-200 font-bold">
-              {' '}
-              {selectedIdentity?.name}{' '}
-            </em>{' '}
-            interested in{' '}
-            <em className="bg-yellow-200 font-bold">
-              {' '}
-              {selectedInterest?.name}{' '}
-            </em>{' '}
-            so I can{' '}
-            <em className="bg-green-200 font-bold"> {selectedGoal?.name} </em>.
-          </span>
+          <em className="bg-blue-200 font-bold">{selectedIdentity?.name}</em>{' '}
+          interested in{' '}
+          <em className="bg-yellow-200 font-bold">{selectedInterest?.name}</em>{' '}
+          so I can{' '}
+          <em className="bg-green-200 font-bold"> {selectedGoal?.name}</em>.
         </p>
       )}
+      <div className="mt-4 flex justify-center">
+        {beginButtonActive && canBegin ? (
+          <Button className="" onClick={begin}>
+            Go
+          </Button>
+        ) : (
+          <Button className="disabled:opacity-50" disabled>
+            Go
+          </Button>
+        )}
+      </div>
     </>
   )
 }
