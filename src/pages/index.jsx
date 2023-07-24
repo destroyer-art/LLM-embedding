@@ -10,7 +10,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 const CONSTANTS = require('../constants.json')
 console.log(CONSTANTS)
 
-const version = '0.2.0'
+const version = '0.2.1'
 const axios = require('axios')
 const APIKEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY
 const client = axios.create({
@@ -126,6 +126,11 @@ export default function Home() {
           </Button>
         )}
       </div>
+      {!beginButtonActive && canBegin && !parsedFnCall && (
+        <div className="mx-auto mt-4 w-1/2 w-3/4 max-w-md justify-center py-4 text-center">
+          <p>Fetching...</p>
+        </div>
+      )}
       {parsedFnCall && (
         <FeedCard
           title={parsedFnCall?.title}
