@@ -8,6 +8,7 @@ export const FeedCard = ({ title, summary, url, justification }) => {
         <a
           href={url ? url : '/#'}
           target="_blank"
+          rel="noopener noreferrer"
           className="text-sm text-blue-600"
         >
           {url ? url : 'URL to source'}
