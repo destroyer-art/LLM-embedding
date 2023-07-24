@@ -7,27 +7,28 @@ import { HeroText } from '@/components/HeroText'
 import { Button } from '@/components/Button'
 import { CirclesBackground } from '@/components/CirclesBackground'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+const CONSTANTS = require('../constants.json')
+console.log(CONSTANTS)
 
 const version = '0.2.0'
-const axios = require('axios');
-const APIKEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+const axios = require('axios')
+const APIKEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY
 const client = axios.create({
-  headers: { 'Authorization': 'Bearer ' + APIKEY} 
-});
+  headers: { Authorization: 'Bearer ' + APIKEY },
+})
 
-const identities = [
-  { id: 'identity-' + 1, name: 'an Investor' },
-  { id: 'identity-' + 2, name: 'a Tech Founder' },
-]
-const interests = [
-  { id: 'interest-' + 1, name: 'Generative AI' },
-  { id: 'interest-' + 2, name: 'AI Agents' },
-]
-const goals = [
-  { id: 'goal-' + 1, name: 'know what insiders are talking about' },
-  { id: 'goal-' + 2, name: 'assess early-stage tech startups' },
-]
+// Unpack constants from CONSTANTS json file
+const identities = CONSTANTS.vibes.identities.map((identity, index) => {
+  return { id: 'identity-' + index, name: identity }
+})
 
+const interests = CONSTANTS.vibes.interests.map((interest, index) => {
+  return { id: 'interest-' + index, name: interest }
+})
+
+const goals = CONSTANTS.vibes.goals.map((goal, index) => {
+  return { id: 'goal-' + index, name: goal }
+})
 
 export default function Home() {
   const [selectedIdentity, setSelectedIdentity] = useState(identities[0])
@@ -35,27 +36,35 @@ export default function Home() {
   const [selectedGoal, setSelectedGoal] = useState('')
   const [beginButtonActive, setBeginButtonActive] = useState(true)
   const canBegin = selectedIdentity && selectedInterest && selectedGoal
+  const [parsedFnCall, setParsedFnCall] = useState()
 
   async function getOpenAIResponse({ prompt }) {
     const params = {
-      "max_tokens": 128,
-      "model": "gpt-3.5-turbo",
-      "messages": [{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": "Hello!"}]
+      ...CONSTANTS.prompts.vibeparse,
     }
-    return client.post('https://api.openai.com/v1/chat/completions', params)
-      .then(result => {
-        return result.data;
-    }).catch(error => {
-      console.log(error);
-    });
+    // Add to messages array
+    params.messages.push({ role: 'user', content: prompt })
+    console.log(params)
+
+    return client
+      .post('https://api.openai.com/v1/chat/completions', params)
+      .then((result) => {
+        console.log('OpenAI result:', result)
+        return result.data
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   async function begin() {
-    console.log('Vibe:', vibeText);
-    setBeginButtonActive(false);
-    const data = await getOpenAIResponse({prompt: vibeText});
-    console.log(data.choices[0].message.content);
-    console.log("OpenAI response", data);
+    console.log('Vibe:', vibeText)
+    setBeginButtonActive(false)
+    const data = await getOpenAIResponse({ prompt: vibeText })
+    const parsedCall = JSON.parse(
+      data.choices[0].message.function_call.arguments
+    )
+    setParsedFnCall(parsedCall)
   }
 
   let vibeText = `I am ${selectedIdentity?.name} interested in ${selectedInterest?.name} so I can ${selectedGoal?.name}.`
@@ -117,13 +126,14 @@ export default function Home() {
           </Button>
         )}
       </div>
-      <FeedCard
-        title={"my title"}
-        summary={"my summary"}
-        url={"my url"}
-        reason={"my reason"}
-        justification={"my justification"}
-      />
+      {parsedFnCall && (
+        <FeedCard
+          title={parsedFnCall?.title}
+          summary={parsedFnCall?.short_summary}
+          url={parsedFnCall?.url}
+          justification={parsedFnCall?.justification}
+        />
+      )}
     </>
   )
 }
