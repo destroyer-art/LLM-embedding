@@ -2,12 +2,18 @@ import { useState } from 'react'
 import { Combobox } from '@headlessui/react'
 import Head from 'next/head'
 import { VibeCombo } from '@/components/VibeCombo'
+import { FeedCard } from '@/components/FeedCard'
 import { HeroText } from '@/components/HeroText'
 import { Button } from '@/components/Button'
 import { CirclesBackground } from '@/components/CirclesBackground'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const version = '0.1.3'
+const version = '0.2.0'
+const axios = require('axios');
+const APIKEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+const client = axios.create({
+  headers: { 'Authorization': 'Bearer ' + APIKEY} 
+});
 
 const identities = [
   { id: 'identity-' + 1, name: 'an Investor' },
@@ -22,6 +28,7 @@ const goals = [
   { id: 'goal-' + 2, name: 'assess early-stage tech startups' },
 ]
 
+
 export default function Home() {
   const [selectedIdentity, setSelectedIdentity] = useState(identities[0])
   const [selectedInterest, setSelectedInterest] = useState('')
@@ -29,9 +36,26 @@ export default function Home() {
   const [beginButtonActive, setBeginButtonActive] = useState(true)
   const canBegin = selectedIdentity && selectedInterest && selectedGoal
 
-  function begin() {
-    console.log('Vibe:', vibeText)
-    setBeginButtonActive(false)
+  async function getOpenAIResponse({ prompt }) {
+    const params = {
+      "max_tokens": 128,
+      "model": "gpt-3.5-turbo",
+      "messages": [{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": "Hello!"}]
+    }
+    return client.post('https://api.openai.com/v1/chat/completions', params)
+      .then(result => {
+        return result.data;
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+  async function begin() {
+    console.log('Vibe:', vibeText);
+    setBeginButtonActive(false);
+    const data = await getOpenAIResponse({prompt: vibeText});
+    console.log(data.choices[0].message.content);
+    console.log("OpenAI response", data);
   }
 
   let vibeText = `I am ${selectedIdentity?.name} interested in ${selectedInterest?.name} so I can ${selectedGoal?.name}.`
@@ -93,6 +117,13 @@ export default function Home() {
           </Button>
         )}
       </div>
+      <FeedCard
+        title={"my title"}
+        summary={"my summary"}
+        url={"my url"}
+        reason={"my reason"}
+        justification={"my justification"}
+      />
     </>
   )
 }
