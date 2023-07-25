@@ -10,7 +10,7 @@ export const HeroText = ({ version }) => {
           <p className="mt-2 text-lg text-gray-600">
             Higher signal. Lower noise.
           </p>
-          <p className="text-sm font-semibold text-gray-900">v{version}</p>
+          <p className="text-sm font-semibold text-gray-900">{version}</p>
         </Container>
       </div>
     </>

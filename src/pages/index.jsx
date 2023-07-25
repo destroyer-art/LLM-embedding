@@ -10,7 +10,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 const CONSTANTS = require('../constants.json')
 console.log(CONSTANTS)
 
-const version = '0.2.1'
+const version = 'v0.3.0'
 const axios = require('axios')
 const APIKEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY
 const client = axios.create({
@@ -57,14 +57,26 @@ export default function Home() {
       })
   }
 
+  async function searchKnowledgebase({ searchText }) {
+    console.log('Searching for:', searchText)
+    const response = await fetch(
+      `https://fomo-embed-server-bountyful.replit.app/search/?text=${encodeURIComponent(
+        searchText
+      )}`
+    )
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+    return data.results
+  }
+
   async function begin() {
     console.log('Vibe:', vibeText)
     setBeginButtonActive(false)
-    const data = await getOpenAIResponse({ prompt: vibeText })
-    const parsedCall = JSON.parse(
-      data.choices[0].message.function_call.arguments
-    )
-    setParsedFnCall(parsedCall)
+    const data = await searchKnowledgebase({ searchText: vibeText })
+    console.log('Search results:', data)
+    setParsedFnCall(data)
   }
 
   let vibeText = `I am ${selectedIdentity?.name} interested in ${selectedInterest?.name} so I can ${selectedGoal?.name}.`
@@ -73,10 +85,9 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>FOMO v{version}</title>
+        <title>FOMO {version}</title>
         <meta name="description" content="Miss out on nothing. Faster." />
       </Head>
-      <CirclesBackground className="absolute left-1/2 top-1/2 -z-10 mt-44 w-[68.125rem] -translate-x-1/2 -translate-y-1/2 stroke-gray-300/30 [mask-image:linear-gradient(to_bottom,white_20%,transparent_75%)]" />
       <HeroText version={version} />
 
       <VibeCombo
@@ -131,14 +142,16 @@ export default function Home() {
           <p>Fetching...</p>
         </div>
       )}
-      {parsedFnCall && (
-        <FeedCard
-          title={parsedFnCall?.title}
-          summary={parsedFnCall?.short_summary}
-          url={parsedFnCall?.url}
-          justification={parsedFnCall?.justification}
-        />
-      )}
+      {parsedFnCall &&
+        parsedFnCall.map((result, index) => (
+          <FeedCard
+            key={index}
+            title={result.title}
+            summary={result.description} // Replace this if you have a separate summary
+            url={result.url}
+            justification={result.similarity} // Replace this if you have a separate justification
+          />
+        ))}
     </>
   )
 }
