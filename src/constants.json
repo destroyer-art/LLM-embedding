@@ -10,6 +10,49 @@
   },
   "prompts": {
     "vibeparse": {
+      "max_tokens": 300,
+      "model": "gpt-3.5-turbo",
+      "temperature": 0.6,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a helpful assistant who helps users find articles, github repos, and arXiv papers they might be interested in. They user tells you about themself, their interests, and their goals. You return a paragraph that expands this information into a full profile that includes all the possible keywords that are relevant to the user."
+        }
+      ]
+    },
+    "justify": {
+      "max_tokens": 300,
+      "model": "gpt-3.5-turbo-0613",
+      "temperature": 0.2,
+      "functions": [
+        {
+          "name": "augment_resource",
+          "description": "Tailor a resource to the user's identity, interests, and goals.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "short_summary": {
+                "type": "string",
+                "description": "A one-sentence summary of the resource, tailored to the user's identity, interests, and goals."
+              },
+              "justification": {
+                "type": "string",
+                "description": "A two-sentence justification for why the resource is relevant to the user, based on their goals."
+              }
+            },
+            "required": ["short_summary", "justification"]
+          }
+        }
+      ],
+      "function_call": { "name": "augment_resource" },
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a helpful assistant who helps the user make sense of articles, github repos, and arXiv papers they might be interested in given their identity, interests, and goals. Only use the functions you have been provided with."
+        }
+      ]
+    },
+    "hallucinate": {
       "max_tokens": 200,
       "model": "gpt-3.5-turbo-0613",
       "temperature": 0.6,

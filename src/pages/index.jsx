@@ -10,7 +10,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 const CONSTANTS = require('../constants.json')
 console.log(CONSTANTS)
 
-const version = 'v0.3.0'
+const version = 'v0.3.1'
 const axios = require('axios')
 const APIKEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY
 const client = axios.create({
@@ -37,17 +37,14 @@ export default function Home() {
   const [beginButtonActive, setBeginButtonActive] = useState(true)
   const canBegin = selectedIdentity && selectedInterest && selectedGoal
   const [parsedFnCall, setParsedFnCall] = useState()
+  const [augmentedSources, setAugmentedSources] = useState()
 
-  async function getOpenAIResponse({ prompt }) {
-    const params = {
-      ...CONSTANTS.prompts.vibeparse,
-    }
+  async function getOpenAIResponse({ prompt, promptParams }) {
     // Add to messages array
-    params.messages.push({ role: 'user', content: prompt })
-    console.log(params)
+    promptParams.messages.push({ role: 'user', content: prompt })
 
     return client
-      .post('https://api.openai.com/v1/chat/completions', params)
+      .post('https://api.openai.com/v1/chat/completions', promptParams)
       .then((result) => {
         console.log('OpenAI result:', result)
         return result.data
@@ -74,9 +71,45 @@ export default function Home() {
   async function begin() {
     console.log('Vibe:', vibeText)
     setBeginButtonActive(false)
-    const data = await searchKnowledgebase({ searchText: vibeText })
-    console.log('Search results:', data)
-    setParsedFnCall(data)
+    // We extend the user's vibe with an OpenAI prompt
+    const vibeExtendedData = await getOpenAIResponse({
+      prompt: vibeText,
+      promptParams: { ...CONSTANTS.prompts.vibeparse },
+    })
+    const vibeExtended = vibeExtendedData.choices[0].message.content
+    console.log('Vibe extended:', vibeExtended)
+    // We search the knowledgebase via API to get related sources
+    const sources = await searchKnowledgebase({ searchText: vibeExtended })
+    console.log('Search results:', sources)
+    setParsedFnCall(sources)
+    // We use ChatGPT to augment the returned sources to tailor them to user vibe
+    // TODO this seems broken
+    const augmentPromises = sources.map((source) => {
+      return getOpenAIResponse({
+        prompt: vibeText + '\nRESOURCE: ' + JSON.stringify(source),
+        promptParams: { ...CONSTANTS.prompts.justify },
+      })
+    })
+
+    const sourcesAugmentedData = await Promise.all(augmentPromises)
+
+    const sourcesAugmented = sourcesAugmentedData.map((sourceData) => {
+      return JSON.parse(sourceData.choices[0].message.function_call.arguments)
+    })
+
+    console.log('Augmented sources:', sourcesAugmented)
+
+    // Add the original sources metadata to the augmented sources
+    const sourcesAugmentedWithMetadata = sources.map((source, index) => {
+      return { ...source, ...sourcesAugmented[index] }
+    })
+
+    console.log(
+      'Augmented sources (with metadata):',
+      sourcesAugmentedWithMetadata
+    )
+
+    setAugmentedSources(sourcesAugmentedWithMetadata)
   }
 
   let vibeText = `I am ${selectedIdentity?.name} interested in ${selectedInterest?.name} so I can ${selectedGoal?.name}.`
@@ -142,14 +175,14 @@ export default function Home() {
           <p>Fetching...</p>
         </div>
       )}
-      {parsedFnCall &&
-        parsedFnCall.map((result, index) => (
+      {augmentedSources &&
+        augmentedSources.map((result, index) => (
           <FeedCard
             key={index}
             title={result.title}
-            summary={result.description} // Replace this if you have a separate summary
+            summary={result.short_summary} // Replace this if you have a separate summary
             url={result.url}
-            justification={result.similarity} // Replace this if you have a separate justification
+            justification={result.justification} // Replace this if you have a separate justification
           />
         ))}
     </>
