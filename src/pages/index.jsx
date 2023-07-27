@@ -3,6 +3,7 @@ import { Combobox } from '@headlessui/react'
 import Head from 'next/head'
 import { VibeCombo } from '@/components/VibeCombo'
 import { FeedCard } from '@/components/FeedCard'
+import { Loader } from '@/components/Loader'
 import { HeroText } from '@/components/HeroText'
 import { Button } from '@/components/Button'
 import { CirclesBackground } from '@/components/CirclesBackground'
@@ -10,7 +11,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 const CONSTANTS = require('../constants.json')
 console.log(CONSTANTS)
 
-const version = 'v0.4.1'
+const version = 'v0.4.2'
 const axios = require('axios')
 const APIKEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY
 const client = axios.create({
@@ -134,12 +135,8 @@ export default function Home() {
                 Go
               </Button>
             )}
+            {!beginButtonActive && canBegin && <Loader />}
           </div>
-          {!beginButtonActive && canBegin && !parsedFnCall && (
-            <div className="mx-auto mt-4 w-1/2 w-3/4 max-w-md justify-center py-4 text-center">
-              <p>Fetching...</p>
-            </div>
-          )}
         </>
       )}
       {parsedFnCall &&
