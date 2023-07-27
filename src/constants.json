@@ -10,13 +10,13 @@
   },
   "prompts": {
     "vibeparse": {
-      "max_tokens": 300,
+      "max_tokens": 200,
       "model": "gpt-3.5-turbo",
-      "temperature": 0.6,
+      "temperature": 0.5,
       "messages": [
         {
           "role": "system",
-          "content": "You are a helpful assistant who helps users find articles, github repos, and arXiv papers they might be interested in. They user tells you about themself, their interests, and their goals. You return a paragraph that expands this information into a full profile that includes all the possible keywords that are relevant to the user."
+          "content": "You are a helpful assistant who helps users find articles, github repos, and arXiv papers they might be interested in. The user tells you about themself, their interests, and their goals. You return a comma-separated list of 50 key terms that are relevant to the user and their interests."
         }
       ]
     },
