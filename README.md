@@ -17,5 +17,7 @@ If you want to spin this up yourself, you're going to need to do the following:
 
 (Yeah, not really production-ready, I know. This was just a hacky MVP to prove the idea).
 
+You could probably make life easier for yourself by refactoring the notebooks code into a new FastAPI API endpoint in `api.py`. Then you can deploy that somewhere (Replit or AWS EC2). Then use something like Vercel to deploy the front-end with minimal hassle (use the free tier). Then you can trigger the embeddings to update by hitting the new API endpoint you made. (I might do that myself if I feel like picking this up again).
+
 ---
 
