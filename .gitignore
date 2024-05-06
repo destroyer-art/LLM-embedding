@@ -5,25 +5,26 @@
 .env.local
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+**/*node_modules
+**/*.pnp
+**/*.pnp.js
 
 # testing
-/coverage
+**/*/coverage
 
 # next.js
-/.next/
-/out/
+**/*.next/
+**/*out/
 
 # production
-/build
+webapp/build
 
 # misc
-.DS_Store
+**/*.DS_Store
 *.pem
 
 # debug
+**/*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -31,6 +32,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+**/*.env
 
 # vercel
-.vercel
+webapp/.vercel
