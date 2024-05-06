@@ -1,0 +1,36 @@
+{
+  "vibes": {
+    "identities": ["an Investor", "a Tech Founder"],
+    "interests": ["Generative AI", "AI Agents"],
+    "goals": [
+      "know what insiders are talking about",
+      "assess early-stage tech startups",
+      "build better products"
+    ]
+  },
+  "prompts": {
+    "vibeparse": {
+      "max_tokens": 200,
+      "model": "gpt-3.5-turbo",
+      "temperature": 0.3,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a helpful assistant who helps users find articles, github repos, and arXiv papers they might be interested in. The user tells you about themself, their interests, and their goals. You return a comma-separated list of 50 key terms that are relevant to the user and their interests."
+        }
+      ]
+    },
+    "justify": {
+      "max_tokens": 300,
+      "model": "gpt-3.5-turbo",
+      "temperature": 0.1,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a helpful assistant who helps the user make sense of online resources they might be interested in given their identity, interests, and goals. You only respond in clear, terse phrases."
+            
+        }
+      ]
+    }
+  }
+}
